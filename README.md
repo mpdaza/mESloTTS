@@ -1,25 +1,32 @@
 # Install Steps on Windows
 
-Clone the repository
+1. Clone the repository
 ```
 git clone https://github.com/natlamir/MeloTTS-Windows.git
 cd MeloTTS-Windows
 ```
 
-Create conda environment and install dependencies
+2. Create conda environment and install dependencies
 ```
 conda env create -f environment.yml
 conda activate melotts-win
 pip install -e .
 python -m unidic download
 ```
+If you have trouble doing the download with the `python -m unidic download` you can try this:
 
-Install pytporch
+- Download the zip from: https://cotonoha-dic.s3-ap-northeast-1.amazonaws.com/unidic-3.1.0.zip
+- Place it in: C:\Users\YOUR_USER_ID\miniconda3\envs\melotts-win\Lib\site-packages\unidic
+- Rename it to unidic.zip
+- Replace the downalod.py file in this same directory with the one from https://github.com/natlamir/ProjectFiles/blob/main/melotts/download.py
+- Now re-run the `python -m unidic download`. This info originally gotten from: https://github.com/myshell-ai/MeloTTS/issues/62#issuecomment-2067361999
+
+3. Install pytorch
 ```
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 ```
 
-Run using:
+4. Run using:
 ```
 melo-ui
 ```
