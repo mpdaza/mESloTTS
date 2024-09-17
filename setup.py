@@ -5,6 +5,10 @@ from setuptools.command.install import install
 
 cwd = os.path.dirname(os.path.abspath(__file__))
 
+def download_nltk_data():
+    import nltk
+    nltk.download('averaged_perceptron_tagger_eng')
+
 # Read requirements from environment.yml
 def parse_requirements(filename):
     with open(filename, 'r') as file:
@@ -23,12 +27,14 @@ class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
         install.run(self)
+        self.execute(download_nltk_data, (), msg="Downloading NLTK data")
         os.system('python -m unidic download')
 
 class PostDevelopCommand(develop):
     """Post-installation for development mode."""
     def run(self):
         develop.run(self)
+        self.execute(download_nltk_data, (), msg="Downloading NLTK data")
         os.system('python -m unidic download')
 
 setup(
