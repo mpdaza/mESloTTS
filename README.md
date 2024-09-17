@@ -3,7 +3,7 @@
 Clone the repository
 ```
 git clone https://github.com/natlamir/MeloTTS-Windows.git
-cd https://github.com/natlamir/MeloTTS-Windows.git
+cd MeloTTS-Windows
 ```
 
 Create conda environment and install dependencies
