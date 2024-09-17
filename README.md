@@ -1,3 +1,30 @@
+# Install Steps on Windows
+
+Clone the repository
+```
+git clone https://github.com/natlamir/MeloTTS-Windows.git
+cd https://github.com/natlamir/MeloTTS-Windows.git
+```
+
+Create conda environment and install dependencies
+```
+conda env create -f environment.yml
+conda activate melotts
+pip install -e .
+python -m unidic download
+```
+
+Install pytporch
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+```
+
+Run using:
+```
+melo-ui
+```
+
+# Original Readme:
 <div align="center">
   <div>&nbsp;</div>
   <img src="logo.png" width="300"/> 
