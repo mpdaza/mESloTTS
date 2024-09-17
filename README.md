@@ -9,7 +9,7 @@ cd https://github.com/natlamir/MeloTTS-Windows.git
 Create conda environment and install dependencies
 ```
 conda env create -f environment.yml
-conda activate melotts
+conda activate melotts-win
 pip install -e .
 python -m unidic download
 ```
