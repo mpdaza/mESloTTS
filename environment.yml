@@ -1,4 +1,4 @@
-name: melotts
+name: melotts-win
 channels:
   - conda-forge
   - defaults
