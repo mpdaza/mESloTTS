@@ -3,17 +3,27 @@ from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 
-
 cwd = os.path.dirname(os.path.abspath(__file__))
 
-with open('requirements.txt') as f:
-    reqs = f.read().splitlines()
+# Read requirements from environment.yml
+def parse_requirements(filename):
+    with open(filename, 'r') as file:
+        requirements = []
+        for line in file:
+            if line.strip().startswith('- pip:'):
+                break
+        for line in file:
+            if line.strip() and not line.strip().startswith('-'):
+                requirements.append(line.strip())
+    return requirements
+
+reqs = parse_requirements('environment.yml')
+
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
         install.run(self)
         os.system('python -m unidic download')
-
 
 class PostDevelopCommand(develop):
     """Post-installation for development mode."""
@@ -36,5 +46,9 @@ setup(
             "melo = melo.main:main",
             "melo-ui = melo.app:main",
         ],
+    },
+    cmdclass={
+        'develop': PostDevelopCommand,
+        'install': PostInstallCommand,
     },
 )

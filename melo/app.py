@@ -1,6 +1,10 @@
+import subprocess
+from glob import glob
+
 # WebUI by mrfakename <X @realmrfakename / HF @mrfakename>
 # Demo also available on HF Spaces: https://huggingface.co/spaces/mrfakename/MeloTTS
 import gradio as gr
+import time
 import os, torch, io
 # os.system('python -m unidic download')
 print("Make sure you've downloaded unidic (python -m unidic download) for this WebUI to work.")
@@ -8,6 +12,7 @@ from melo.api import TTS
 speed = 1.0
 import tempfile
 import click
+import atexit
 device = 'auto'
 models = {
     'EN': TTS(language='EN', device=device),
@@ -28,16 +33,59 @@ default_text_dict = {
     'KR': '최근 텍스트 음성 변환 분야가 급속도로 발전하고 있습니다.',    
 }
     
-def synthesize(speaker, text, speed, language, progress=gr.Progress()):
-    bio = io.BytesIO()
-    models[language].tts_to_file(text, models[language].hps.data.spk2id[speaker], bio, speed=speed, pbar=progress.tqdm, format='wav')
-    return bio.getvalue()
+def get_ckpt_files(folder_path):
+    return [os.path.basename(f) for f in glob(os.path.join(folder_path, '*.pth'))]
+
+def run_infer(text, ckpt_file):
+    output_dir = "output"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    ckpt_path = os.path.join("custom", ckpt_file)
+    cmd = f"python infer.py --text \"{text}\" -m \"{ckpt_path}\" -o \"{output_dir}\""
+    
+    try:
+        subprocess.run(cmd, shell=True, check=True)
+        return os.path.join(output_dir, "output.wav")
+    except subprocess.CalledProcessError as e:
+        print(f"Error running infer.py: {e}")
+        return None
+
+def synthesize(speaker, text, speed, language, ckpt_file, progress=gr.Progress()):    
+    start_time = time.time()
+    print(f"Synthesis started at: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_time))}")
+    
+    if ckpt_file:
+        # Use infer.py
+        output_file = run_infer(text, ckpt_file)
+    else:
+        # Use original MeloTTS synthesis
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
+            models[language].tts_to_file(text, models[language].hps.data.spk2id[speaker], temp_file.name, speed=speed, pbar=progress.tqdm)
+        output_file = temp_file.name
+    
+    end_time = time.time()
+    print(f"Synthesis ended at: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_time))}")
+    
+    execution_time = end_time - start_time
+    print(f"Total execution time: {execution_time:.2f} seconds")
+    
+    return output_file
+    
+def cleanup_temp_files():
+    temp_dir = tempfile.gettempdir()
+    for filename in os.listdir(temp_dir):
+        if filename.endswith(".wav"):
+            os.remove(os.path.join(temp_dir, filename))
+
+atexit.register(cleanup_temp_files)
+    
 def load_speakers(language, text):
     if text in list(default_text_dict.values()):
         newtext = default_text_dict[language]
     else:
         newtext = text
     return gr.update(value=list(models[language].hps.data.spk2id.keys())[0], choices=list(models[language].hps.data.spk2id.keys())), newtext
+
 with gr.Blocks() as demo:
     gr.Markdown('# MeloTTS WebUI\n\nA WebUI for MeloTTS.')
     with gr.Group():
@@ -45,17 +93,20 @@ with gr.Blocks() as demo:
         language = gr.Radio(['EN', 'ES', 'FR', 'ZH', 'JP', 'KR'], label='Language', value='EN')
         speed = gr.Slider(label='Speed', minimum=0.1, maximum=10.0, value=1.0, interactive=True, step=0.1)
         text = gr.Textbox(label="Text to speak", value=default_text_dict['EN'])
+        ckpt_files = get_ckpt_files(r"C:\ai\MeloTTS\melo\custom")
+        ckpt_dropdown = gr.Dropdown(choices=ckpt_files, label="Select .pth file (optional)", interactive=True)
         language.input(load_speakers, inputs=[language, text], outputs=[speaker, text])
     btn = gr.Button('Synthesize', variant='primary')
-    aud = gr.Audio(interactive=False)
-    btn.click(synthesize, inputs=[speaker, text, speed, language], outputs=[aud])
+    aud = gr.Audio(interactive=False, type="filepath")
+    btn.click(synthesize, inputs=[speaker, text, speed, language, ckpt_dropdown], outputs=[aud])
     gr.Markdown('WebUI by [mrfakename](https://twitter.com/realmrfakename).')
+
 @click.command()
 @click.option('--share', '-s', is_flag=True, show_default=True, default=False, help="Expose a publicly-accessible shared Gradio link usable by anyone with the link. Only share the link with people you trust.")
 @click.option('--host', '-h', default=None)
 @click.option('--port', '-p', type=int, default=None)
 def main(share, host, port):
-    demo.queue(api_open=False).launch(show_api=False, share=share, server_name=host, server_port=port)
+    demo.queue(api_open=False).launch(inbrowser=True, server_name=host, server_port=port)
 
 if __name__ == "__main__":
     main()

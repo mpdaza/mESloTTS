@@ -59,7 +59,7 @@ def get_text_for_tts_infer(text, language_str, hps, device, symbol_to_id=None):
 
 def load_checkpoint(checkpoint_path, model, optimizer=None, skip_optimizer=False):
     assert os.path.isfile(checkpoint_path)
-    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
+    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     iteration = checkpoint_dict.get("iteration", 0)
     learning_rate = checkpoint_dict.get("learning_rate", 0.)
     if (
@@ -260,24 +260,30 @@ def get_hparams(init=True):
                             help='pretrain model D')
     parser.add_argument('--pretrain_dur', type=str, default=None,
                             help='pretrain model duration')
-
     args = parser.parse_args()
     model_dir = os.path.join("./logs", args.model)
-
     os.makedirs(model_dir, exist_ok=True)
-
     config_path = args.config
     config_save_path = os.path.join(model_dir, "config.json")
+
+    def read_file_with_fallback_encoding(file_path):
+        encodings = ['utf-8', 'utf-16', 'utf-32', 'ascii', 'cp1252']
+        for encoding in encodings:
+            try:
+                with open(file_path, "r", encoding=encoding) as f:
+                    return f.read()
+            except UnicodeDecodeError:
+                continue
+        raise ValueError(f"Unable to read the file {file_path} with any of the following encodings: {encodings}")
+
     if init:
-        with open(config_path, "r") as f:
-            data = f.read()
-        with open(config_save_path, "w") as f:
+        data = read_file_with_fallback_encoding(config_path)
+        with open(config_save_path, "w", encoding='utf-8') as f:
             f.write(data)
     else:
-        with open(config_save_path, "r") as f:
-            data = f.read()
-    config = json.loads(data)
+        data = read_file_with_fallback_encoding(config_save_path)
 
+    config = json.loads(data)
     hparams = HParams(**config)
     hparams.model_dir = model_dir
     hparams.pretrain_G = args.pretrain_G
