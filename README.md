@@ -31,6 +31,21 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 melo-ui
 ```
 
+# Local Training on Windows
+1. In the `melo/data/example` folder, delete the example `metadata.list` file.
+2. If you need to convert mp3 to wav, create a folder called `mp3s` in the example folder and copy all your mp3 files into the `mp3s` folder
+3. With a conda window activated with the enviroment open in the `melo` folder, run `ConvertMp3toWav.bat` from the conda prompt. This will create a folder `data/example/wavs` with all of the converted wav files.
+4. Create a transcript file by running `python transcript.py` which will create a `data/example/metadata.list` file.
+5. Run `python preprocess_text.py --metadata data/example/metadata.list` to create the `train.list`, `config.json`, among other files in the `data/example` folder.
+6. Modify `config.json` to change the batch size, epochs, learning rate, etc.
+7. From the conda prompt run `train.bat` to start the training.
+8. File will be created within the `data/example/config` folder with the checkpoints and other logging information.
+9. To test out a checkpoint, run: `python infer.py --text "this is a test" -m "C:\ai\MeloTTS-Windows\melo\data\example\config\G_0.pth" -o output` changing the G_0 to the checkpoint you want to test with G_1000, G2000, etc.
+10. When you want to use a checkpoint from the UI, create a `melo/custom` folder and copy the .pth and `config.json` file over from the `data/example/config`, rename the .pth to a user-friendly name, and launch the UI to see it in the custom voice dropdown.
+11. To see the tensorboard, install `pip install tensorflow`
+12. Run `tensorboard --logdir=data\example\config`
+13. This will give you the local URL to view the tensorboard.
+
 # Original Readme:
 <div align="center">
   <div>&nbsp;</div>
