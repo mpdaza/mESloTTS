@@ -43,7 +43,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
 
         self.add_blank = hparams.add_blank
         self.min_text_len = getattr(hparams, "min_text_len", 1)
-        self.max_text_len = getattr(hparams, "max_text_len", 300)
+        self.max_text_len = getattr(hparams, "max_text_len", 30000)
 
         random.seed(1234)
         random.shuffle(self.audiopaths_sid_text)
@@ -106,6 +106,8 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
 
     def get_audio(self, filename):
         audio_norm, sampling_rate = load_wav_to_torch(filename, self.sampling_rate)
+        # print(sampling_rate)
+        # print(self.sampling_rate)
         if sampling_rate != self.sampling_rate:
             raise ValueError(
                 "{} {} SR doesn't match target {} SR".format(
@@ -145,6 +147,9 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
                 )
             spec = torch.squeeze(spec, 0)
             torch.save(spec, spec_filename)
+            # if '629.spec.pt' in spec_filename:
+            #     print(spec_filename)
+            #     print(spec)
         return spec, audio_norm
 
     def get_text(self, text, word2ph, phone, tone, language_str, wav_path):

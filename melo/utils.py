@@ -247,6 +247,7 @@ def get_hparams(init=True):
         "-c",
         "--config",
         type=str,
+        # default = "/home/jovyan/MeloTTS-Windows/melo/data/example/config.json",
         default="./configs/base.json",
         help="JSON file for configuration",
     )

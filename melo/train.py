@@ -6,6 +6,10 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.cuda.amp import autocast, GradScaler
 from tqdm import tqdm
 import logging
+import pdb
+import debugpy
+import json
+import wandb
 
 logging.getLogger("numba").setLevel(logging.WARNING)
 import commons
@@ -29,6 +33,12 @@ torch.backends.cudnn.benchmark = True
 global_step = 0
 
 def run():
+    # Init wandb
+    wand_project_melo = 'melotts-optimization'
+    wandb.init(project=wand_project_melo)
+    # Registerparams and the gradient descent
+    
+        
     hps = utils.get_hparams()
     
     torch.manual_seed(hps.train.seed)
@@ -46,13 +56,34 @@ def run():
     train_loader = DataLoader(
         train_dataset,
         num_workers=8,
-        shuffle=True,
+        shuffle=False,
         pin_memory=True,
         collate_fn=collate_fn,
         batch_size=hps.train.batch_size,
         persistent_workers=True,
         prefetch_factor=4,
     )
+    
+    print('PÀTATAAAAAAAAAAAAAAAAAAAAAAAAA')
+
+
+    # Supongamos que train_loader ya está definido y contiene un batch_sampler.
+    batch_sampler = train_loader.batch_sampler
+
+    # Crear una lista para almacenar los índices de los lotes.
+    batch_indices = []
+
+    # Iterar sobre el BatchSampler para obtener los lotes.
+    for batch in batch_sampler:
+        batch_indices.append(batch)
+
+    # Guardar los índices de los lotes en un archivo JSON.
+    with open('batch_indices.json', 'w') as f:
+        json.dump(batch_indices, f, indent=4)
+
+    print("Los índices de los lotes se han guardado en 'batch_indices.json'.")
+
+    print(train_loader.batch_size, 'train_loader.batch_size')
     
     eval_dataset = TextAudioSpeakerLoader(hps.data.validation_files, hps.data)
     eval_loader = DataLoader(
@@ -65,6 +96,25 @@ def run():
         collate_fn=collate_fn,
     )
     
+         # Supongamos que train_loader ya está definido y contiene un batch_sampler.
+    batch_sampler_eval = eval_loader.batch_sampler
+
+    # Crear una lista para almacenar los índices de los lotes.
+    batch_indices_eval = []
+
+    # Iterar sobre el BatchSampler para obtener los lotes.
+    for batch in batch_sampler_eval:
+        batch_indices_eval.append(batch)
+
+    # Guardar los índices de los lotes en un archivo JSON.
+    with open('batch_indices_eval.json', 'w') as f:
+        json.dump(batch_indices_eval, f, indent=4)
+
+    print("Los índices de los lotes se han guardado en 'batch_indices_eval.json'.")
+
+    print(eval_loader.batch_size, 'train_loader.batch_size')
+    
+    
     net_g = SynthesizerTrn(
         len(symbols),
         hps.data.filter_length // 2 + 1,
@@ -72,7 +122,9 @@ def run():
         n_speakers=hps.data.n_speakers,
         **hps.model,
     ).cuda()
-
+    
+    wandb.watch(net_g, log="all")
+    
     net_d = MultiPeriodDiscriminator(hps.model.use_spectral_norm).cuda()
     
     optim_g = torch.optim.AdamW(
@@ -106,6 +158,7 @@ def run():
         )
 
     pretrain_G, pretrain_D, pretrain_dur = load_pretrain_model()
+    # pretrain_D, pretrain_dur = None, None
     hps.pretrain_G = hps.pretrain_G or pretrain_G
     hps.pretrain_D = hps.pretrain_D or pretrain_D
     hps.pretrain_dur = hps.pretrain_dur or pretrain_dur
@@ -184,6 +237,9 @@ def train_and_evaluate(
     writer, writer_eval = writers
 
     global global_step
+    # Init the loss sum like infinity
+    best_loss_sum = float('inf')  
+    best_model = None
 
     net_g.train()
     net_d.train()
@@ -199,7 +255,15 @@ def train_and_evaluate(
         language = language.cuda(non_blocking=True)
         bert = bert.cuda(non_blocking=True)
         ja_bert = ja_bert.cuda(non_blocking=True)
-
+                               
+        # print(train_loader.__getitem__(batch_idx))  
+        if (x.cpu().sum()==0):
+            print('error');
+                               
+        # if '629.spec.pt' in spec_filename:
+        #         print(spec_filename)
+        #         print(spec)
+         
         with autocast(enabled=hps.train.fp16_run):
             y_hat, l_length, attn, ids_slice, x_mask, z_mask, (z, z_p, m_p, logs_p, m_q, logs_q), (hidden_x, logw, logw_) = net_g(x, x_lengths, spec, spec_lengths, speakers, tone, language, bert, ja_bert)
             mel = spec_to_mel_torch(
@@ -210,6 +274,10 @@ def train_and_evaluate(
                 hps.data.mel_fmin,
                 hps.data.mel_fmax,
             )
+            # print(f"{x}, ")
+            # print(f"x.shape: {x.shape}, idx_str: {idx_str}, idx_end: {idx_end}")
+            
+            # print(mel.cpu().numpy().size)
             y_mel = commons.slice_segments(
                 mel, ids_slice, hps.train.segment_size // hps.data.hop_length
             )
@@ -334,6 +402,7 @@ def train_and_evaluate(
                 images=image_dict,
                 scalars=scalar_dict,
             )
+            wandb.log(scalar_dict)
 
         if global_step % hps.train.eval_interval == 0:
             evaluate(hps, net_g, eval_loader, writer_eval)
@@ -359,14 +428,21 @@ def train_and_evaluate(
                     epoch,
                     os.path.join(hps.model_dir, "DUR_{}.pth".format(global_step)),
                 )
-            keep_ckpts = getattr(hps.train, "keep_ckpts", 5)
+            keep_ckpts = getattr(hps.train, "keep_ckpts", 0)
             if keep_ckpts > 0:
                 utils.clean_checkpoints(
                     path_to_models=hps.model_dir,
                     n_ckpts_to_keep=keep_ckpts,
                     sort_by_time=True,
                 )
-
+        # Save the best model
+        total_loss = loss_gen_all + loss_disc_all
+        if total_loss < best_loss_sum:
+            best_loss_sum = total_loss
+            best_model = net_g  
+            torch.save(best_model.state_dict(), "best_model.pth")
+        # Save the best model in wand after complete the epochs
+        wandb.save("best_model.pth")
         global_step += 1
 
     logger.info("====> Epoch: {}".format(epoch))
@@ -387,6 +463,7 @@ def evaluate(hps, generator, eval_loader, writer_eval):
             ja_bert = ja_bert.cuda()
             tone = tone.cuda()
             language = language.cuda()
+            print(language)
             for use_sdp in [True, False]:
                 y_hat, attn, mask, *_ = generator.infer(
                     x,

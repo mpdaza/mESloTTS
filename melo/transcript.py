@@ -2,13 +2,15 @@ import os
 import whisper
 
 # Configuration variables
-INPUT_FOLDER = "data\\example\\wavs"
-OUTPUT_FILE = "data\\example\\metadata.list"
+# INPUT_FOLDER = "data\\example\\wavs"
+# OUTPUT_FILE = "data\\example\\metadata.list"
+INPUT_FOLDER = "data/example/wavs"
+OUTPUT_FILE = "data/example/metadata.list"
 LANGUAGE_CODE = "EN"
 LANGUAGE_MODEL = "EN-default"
 
 # Load the whisper model
-model = whisper.load_model("base")
+model = whisper.load_model("large-v3")
 
 # Get the list of WAV files in the input directory
 wav_files = [file for file in os.listdir(INPUT_FOLDER) if file.endswith(".wav")]
@@ -30,6 +32,10 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as transcript_file:
         result = model.transcribe(wav_path)
         # Remove leading and trailing spaces from the transcribed text
         transcribed_text = result['text'].strip()
+        if len(transcribed_text) == 0:
+            print(f"Failed to transcribe: {wav_file}")
+            continue
+
         
         # Write the result to the transcript file in the desired format
         line = f"{output_path}/{wav_file}|{LANGUAGE_MODEL}|{LANGUAGE_CODE}|{transcribed_text}"

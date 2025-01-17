@@ -1,19 +1,28 @@
-CONFIG=$1
-GPUS=$2
-MODEL_NAME=$(basename "$(dirname $CONFIG)")
+#!/bin/bash
 
-PORT=10902
+#source data/melotts/bin/activate
 
-while : # auto-resume: the code sometimes crash due to bug of gloo on some gpus
-do
-torchrun --nproc_per_node=$GPUS \
-        --master_port=$PORT \
-    train.py --c $CONFIG --model $MODEL_NAME 
+# python -m unidic download
+# Set the relative path to the config file
+RELATIVE_CONFIG_PATH="data/example/config.json"
 
-for PID in $(ps -aux | grep $CONFIG | grep python | awk '{print $2}')
-do
-    echo $PID
-    kill -9 $PID
-done
-sleep 30
-done
+# Get the directory of the script
+SCRIPT_DIR="$(dirname "$0")"
+
+# Construct the full path to the config file
+CONFIG="$SCRIPT_DIR/$RELATIVE_CONFIG_PATH"
+
+# Extract the model name from the config path
+MODEL_NAME="$(basename "$CONFIG" .json)"
+
+# Loop for training
+# while true; do
+    # Run the training script
+python train.py -c "$CONFIG" -m "$MODEL_NAME"
+
+    # Kill any running Python processes
+    # pkill -f python
+
+    # Wait for 30 seconds before restarting
+#     sleep 30
+# done

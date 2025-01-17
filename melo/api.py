@@ -25,10 +25,12 @@ class TTS(nn.Module):
                 config_path=None,
                 ckpt_path=None):
         super().__init__()
-        if device == 'auto':
-            device = 'cpu'
-            if torch.cuda.is_available(): device = 'cuda'
-            if torch.backends.mps.is_available(): device = 'mps'
+        device='cuda'
+        # if device == 'auto':
+        #     device = 'cuda'
+        #     if torch.cuda.is_available(): device = 'cuda'
+        #         print('CUDA')
+        #     if torch.backends.mps.is_available(): device = 'mps'
         if 'cuda' in device:
             assert torch.cuda.is_available()
 
@@ -63,7 +65,7 @@ class TTS(nn.Module):
         self.language = 'ZH_MIX_EN' if language == 'ZH' else language # we support a ZH_MIX_EN model
 
     @staticmethod
-    def audio_numpy_concat(segment_data_list, sr, speed=1.):
+    def audio_numpy_concat(segment_data_list, sr, speed=1.5):
         audio_segments = []
         for segment_data in segment_data_list:
             audio_segments += segment_data.reshape(-1).tolist()
@@ -80,7 +82,7 @@ class TTS(nn.Module):
             print(" > ===========================")
         return texts
 
-    def tts_to_file(self, text, speaker_id, output_path=None, sdp_ratio=0.2, noise_scale=0.6, noise_scale_w=0.8, speed=1.0, pbar=None, format=None, position=None, quiet=False,):
+    def tts_to_file(self, text, speaker_id, output_path=None, sdp_ratio=0.2, noise_scale=0.6, noise_scale_w=0.8, speed=1.5, pbar=None, format=None, position=None, quiet=False,):
         language = self.language
         texts = self.split_sentences_into_pieces(text, language, quiet)
         audio_list = []

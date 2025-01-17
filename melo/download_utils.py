@@ -30,6 +30,12 @@ PRETRAINED_MODELS = {
     'DUR.pth': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/pretrained/DUR.pth',
 }
 
+# PRETRAINED_MODELS = {
+#     'G.pth': './base_models/G_235000.pth',
+#     'D.pth': './base_models/D_235000.pth',
+#     'DUR.pth': './base_models/DUR_235000.pth',
+# }
+
 LANG_TO_HF_REPO_ID = {
     'EN': 'myshell-ai/MeloTTS-English',
     'EN_V2': 'myshell-ai/MeloTTS-English-v2',

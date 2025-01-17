@@ -10,7 +10,7 @@ from text.cleaner import clean_text_bert
 import os
 import torch
 from text.symbols import symbols, num_languages, num_tones
-
+import nltk
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -116,8 +116,11 @@ def main(
 
     for spk, utts in spk_utt_map.items():
         shuffle(utts)
-        val_list += utts[:val_per_spk]
-        train_list += utts[val_per_spk:]
+        # val_list += utts[:val_per_spk]
+        # train_list += utts[val_per_spk:]
+#         For change the 80 and 20 per cent
+        val_list += utts[val_per_spk:]
+        train_list += utts[:val_per_spk]
 
     logger.info(f"Initial train list size: {len(train_list)}")
     logger.info(f"Initial val list size: {len(val_list)}")
