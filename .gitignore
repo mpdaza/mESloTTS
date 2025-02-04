@@ -11,6 +11,7 @@ build/
 *.wav
 *.pth
 *.mp3
+*.tar
 melo/logs
 melo/base_models
 melo/wandb
