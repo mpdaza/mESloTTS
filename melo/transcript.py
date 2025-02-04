@@ -28,6 +28,7 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as transcript_file:
         print(f"Transcribing: {wav_file}")
         # Construct the full path to the WAV file
         wav_path = os.path.join(INPUT_FOLDER, wav_file)
+        print(wav_path)
         # Transcribe the current WAV file
         result = model.transcribe(wav_path)
         # Remove leading and trailing spaces from the transcribed text
@@ -42,5 +43,7 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as transcript_file:
         if i < len(wav_files) - 1:
             line += "\n"
         transcript_file.write(line)
-
+        with open("data/example/prueba.txt", "w") as f:
+            f.write(transcribed_text)
+            
 print(f"Transcription complete. Check '{OUTPUT_FILE}' for results.")

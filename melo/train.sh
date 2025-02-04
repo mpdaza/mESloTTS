@@ -19,7 +19,7 @@ MODEL_NAME="$(basename "$CONFIG" .json)"
 # while true; do
     # Run the training script
 python train.py -c "$CONFIG" -m "$MODEL_NAME"
-
+# python train_wandb.py -c "$CONFIG" -m "$MODEL_NAME"
     # Kill any running Python processes
     # pkill -f python
 

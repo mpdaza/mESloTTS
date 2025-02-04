@@ -1,6 +1,7 @@
 import os
 import click
-from melo.api import TTS
+from api import TTS
+import logger
 
     
     
@@ -22,4 +23,5 @@ def main(ckpt_path, text, language, output_dir):
         model.tts_to_file(text, spk_id, save_path)
 
 if __name__ == "__main__":
+    logger.init()
     main()

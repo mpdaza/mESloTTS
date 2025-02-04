@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import logging
 import torch
 import librosa
 import soundfile
@@ -9,13 +10,14 @@ import numpy as np
 import torch.nn as nn
 from tqdm import tqdm
 import torch
+import logger
 
-from . import utils
-from . import commons
-from .models import SynthesizerTrn
-from .split_utils import split_sentence
-from .mel_processing import spectrogram_torch, spectrogram_torch_conv
-from .download_utils import load_or_download_config, load_or_download_model
+import utils
+import commons
+from models import SynthesizerTrn
+from split_utils import split_sentence
+from mel_processing import spectrogram_torch, spectrogram_torch_conv
+from download_utils import load_or_download_config, load_or_download_model
 
 class TTS(nn.Module):
     def __init__(self, 
@@ -63,7 +65,23 @@ class TTS(nn.Module):
         
         language = language.split('_')[0]
         self.language = 'ZH_MIX_EN' if language == 'ZH' else language # we support a ZH_MIX_EN model
+        # log_path = '/home/jovyan/MeloTTS-Windows/melo/logs_personalizados'
+        #self.logger = logger.log
+        # logging.basicConfig(filename=, level=logging.INFO)
+        # Definir la ruta personalizada
+        # Usar una carpeta diferente para el archivo de log
+        # Ruta personalizada para guardar el archivo de log
+        # try:
+        #     log_path = '/home/jovyan/MeloTTS-Windows/melo/logs_personalizados'
+        #     logger = utils.get_logger(log_path, filename="train_log.log")
+        logger.log.info("Logger inicializado con éxito")
+        # except Exception as e:
+        #     print(f"Error al inicializar el logger: {e}")
 
+
+
+
+        
     @staticmethod
     def audio_numpy_concat(segment_data_list, sr, speed=1.5):
         audio_segments = []
@@ -95,7 +113,13 @@ class TTS(nn.Module):
                 tx = texts
             else:
                 tx = tqdm(texts)
+        print(tx)
+        logger.log.info("tx=texts object")
+        logger.log.info(texts)
         for t in tx:
+            print(t)
+            logger.log.info('Including t from tx')
+            logger.log.info([t])
             if language in ['EN', 'ZH_MIX_EN']:
                 t = re.sub(r'([a-z])([A-Z])', r'\1 \2', t)
             device = self.device
@@ -107,6 +131,12 @@ class TTS(nn.Module):
                 bert = bert.to(device).unsqueeze(0)
                 ja_bert = ja_bert.to(device).unsqueeze(0)
                 x_tst_lengths = torch.LongTensor([phones.size(0)]).to(device)
+                logger.log.info(x_tst.cpu())
+                logger.log.info(tones.cpu())
+                logger.log.info(lang_ids.cpu())
+                logger.log.info(bert.cpu())
+                logger.log.info(ja_bert.cpu())
+                logger.log.info(x_tst_lengths.cpu())
                 del phones
                 speakers = torch.LongTensor([speaker_id]).to(device)
                 audio = self.model.infer(
@@ -121,7 +151,7 @@ class TTS(nn.Module):
                         noise_scale=noise_scale,
                         noise_scale_w=noise_scale_w,
                         length_scale=1. / speed,
-                    )[0][0, 0].data.cpu().float().numpy()
+                    )[0][0, 0].data.cpu().float().numpy()                
                 del x_tst, tones, lang_ids, bert, ja_bert, x_tst_lengths, speakers
                 # 
             audio_list.append(audio)
@@ -131,7 +161,10 @@ class TTS(nn.Module):
         if output_path is None:
             return audio
         else:
+
             if format:
+                print('format')
                 soundfile.write(output_path, audio, self.hps.data.sampling_rate, format=format)
             else:
+                print('without format')
                 soundfile.write(output_path, audio, self.hps.data.sampling_rate)

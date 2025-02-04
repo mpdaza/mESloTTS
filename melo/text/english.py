@@ -2,13 +2,14 @@ import pickle
 import os
 import re
 from g2p_en import G2p
+import logger
 
-from . import symbols
+import text.symbols as symbols
 
-from .english_utils.abbreviations import expand_abbreviations
-from .english_utils.time_norm import expand_time_english
-from .english_utils.number_norm import normalize_numbers
-from .japanese import distribute_phone
+from text.english_utils.abbreviations import expand_abbreviations
+from text.english_utils.time_norm import expand_time_english
+from text.english_utils.number_norm import normalize_numbers
+from text.japanese import distribute_phone
 
 from transformers import AutoTokenizer
 
@@ -16,6 +17,8 @@ current_file_path = os.path.dirname(__file__)
 CMU_DICT_PATH = os.path.join(current_file_path, "cmudict.rep")
 CACHE_PATH = os.path.join(current_file_path, "cmudict_cache.pickle")
 _g2p = G2p()
+# logger = logging.getLogger(__name__)
+
 
 arpa = {
     "AH0",
@@ -174,7 +177,7 @@ def refine_syllables(syllables):
             phn = phn_list[i]
             phn, tone = refine_ph(phn)
             phonemes.append(phn)
-            tones.append(tone)
+            tones.append(tone)        
     return phonemes, tones
 
 
@@ -193,6 +196,7 @@ def g2p_old(text):
     phones = []
     tones = []
     words = re.split(r"([,;.\-\?\!\s+])", text)
+    
     for w in words:
         if w.upper() in eng_dict:
             phns, tns = refine_syllables(eng_dict[w.upper()])
@@ -218,6 +222,8 @@ def g2p(text, pad_start_end=True, tokenized=None):
     if tokenized is None:
         tokenized = tokenizer.tokenize(text)
     # import pdb; pdb.set_trace()
+    logger.log.info("Bert-tokens")
+    logger.log.info(tokenized)
     phs = []
     ph_groups = []
     for t in tokenized:
@@ -225,10 +231,29 @@ def g2p(text, pad_start_end=True, tokenized=None):
             ph_groups.append([t])
         else:
             ph_groups[-1].append(t.replace("#", ""))
-    
+    logger.log.info("Group phones")
+    logger.log.info(ph_groups)
     phones = []
     tones = []
     word2ph = []
+    
+    phoneToneARPA = []
+    for group in ph_groups:
+        w = "".join(group)
+        if w.upper() in eng_dict:
+            phoneToneARPA.append(eng_dict[w.upper()])
+        else:
+            phone_list = list(filter(lambda p: p != " ", _g2p(w)))
+            for ph in phone_list:
+                if ph in arpa:
+                    ph, tn = refine_ph(ph)
+                    phoneToneARPA.append(ph)
+                else:
+                    phoneToneARPA.append(ph)
+    
+    logger.log.info('DERRAME')
+    logger.log.info(phoneToneARPA) 
+    
     for group in ph_groups:
         w = "".join(group)
         phone_len = 0
@@ -252,7 +277,12 @@ def g2p(text, pad_start_end=True, tokenized=None):
         aaa = distribute_phone(phone_len, word_len)
         word2ph += aaa
     phones = [post_replace_ph(i) for i in phones]
-
+    logger.log.info("Phones-g2p")
+    logger.log.info(phones)
+    logger.log.info("tones-g2p")
+    logger.log.info(tones)
+    logger.log.info("word2ph-g2p")
+    logger.log.info(word2ph)
     if pad_start_end:
         phones = ["_"] + phones + ["_"]
         tones = [0] + tones + [0]
@@ -268,12 +298,13 @@ if __name__ == "__main__":
     # print(get_dict())
     # print(eng_word_to_phoneme("hello"))
     from text.english_bert import get_bert_feature
+    # log_path = '/home/jovyan/MeloTTS-Windows/melo/logs_personalizados'
+    # log = get_logger(log_path)
     text = "In this paper, we propose 1 DSPGAN, a N-F-T GAN-based universal vocoder."
     text = text_normalize(text)
     phones, tones, word2ph = g2p(text)
     import pdb; pdb.set_trace()
     bert = get_bert_feature(text, word2ph)
-    
     print(phones, tones, word2ph, bert.shape)
 
     # all_phones = set()
@@ -282,3 +313,18 @@ if __name__ == "__main__":
     #         for ph in group:
     #             all_phones.add(ph)
     # print(all_phones)
+
+    
+# def get_logger(model_dir, filename="train.log"):
+#     global logger
+#     logger = logging.getLogger(os.path.basename(model_dir))
+#     logger.setLevel(logging.DEBUG)
+
+#     formatter = logging.Formatter("%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s")
+#     if not os.path.exists(model_dir):
+#         os.makedirs(model_dir, exist_ok=True)
+#     h = logging.FileHandler(os.path.join(model_dir, filename))
+#     h.setLevel(logging.DEBUG)
+#     h.setFormatter(formatter)
+#     logger.addHandler(h)
+#     return logger
