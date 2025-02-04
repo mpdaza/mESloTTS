@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 def init():
     global log
-    log_path =  '/home/jovyan/MeloTTS-Windows/melo/logs_personalizados'
+    log_path =  'logs_personalizados'
     log = get_logger(log_path)
 
 def get_logger(model_dir, filename="train.log"):
