@@ -162,7 +162,10 @@ eng_dict = get_dict()
 
 
 def refine_ph(phn):
+    arpaph = []
     tone = 0
+    arpaph.append(phn)
+    logger.log.info(arpaph)
     if re.search(r"\d$", phn):
         tone = int(phn[-1]) + 1
         phn = phn[:-1]
@@ -242,6 +245,7 @@ def g2p(text, pad_start_end=True, tokenized=None):
         w = "".join(group)
         if w.upper() in eng_dict:
             phoneToneARPA.append(eng_dict[w.upper()])
+            # phoneToneARPA.append(w.upper())
         else:
             phone_list = list(filter(lambda p: p != " ", _g2p(w)))
             for ph in phone_list:

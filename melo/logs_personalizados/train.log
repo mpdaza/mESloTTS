@@ -1,63 +1,191 @@
-2025-02-04 11:55:10,272	logs_personalizados	INFO	Logger inicializado con éxito
-2025-02-04 11:55:10,287	logs_personalizados	INFO	tx=texts object
-2025-02-04 11:55:10,287	logs_personalizados	INFO	['Unnafable.']
-2025-02-04 11:55:10,287	logs_personalizados	INFO	Including t from tx
-2025-02-04 11:55:10,287	logs_personalizados	INFO	['Unnafable.']
-2025-02-04 11:55:10,293	logs_personalizados	INFO	Bert-tokens
-2025-02-04 11:55:10,293	logs_personalizados	INFO	['un', '##na', '##fa', '##ble', '.']
-2025-02-04 11:55:10,293	logs_personalizados	INFO	Group phones
-2025-02-04 11:55:10,293	logs_personalizados	INFO	[['un', 'na', 'fa', 'ble'], ['.']]
-2025-02-04 11:55:10,396	logs_personalizados	INFO	DERRAME
-2025-02-04 11:55:10,396	logs_personalizados	INFO	['ah', 'n', 'ah', 'f', 'ae', 'g', 'ah', 'b', 'ah', 'l', '.']
-2025-02-04 11:55:10,398	logs_personalizados	INFO	Phones-g2p
-2025-02-04 11:55:10,398	logs_personalizados	INFO	['ah', 'n', 'ah', 'f', 'ae', 'g', 'ah', 'b', 'ah', 'l', '.']
-2025-02-04 11:55:10,399	logs_personalizados	INFO	tones-g2p
-2025-02-04 11:55:10,399	logs_personalizados	INFO	[1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 0]
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph-g2p
-2025-02-04 11:55:10,399	logs_personalizados	INFO	[3, 3, 2, 2, 1]
-2025-02-04 11:55:10,399	logs_personalizados	INFO	phones from t
-2025-02-04 11:55:10,399	logs_personalizados	INFO	[0, 23, 73, 23, 45, 22, 46, 23, 30, 23, 70, 212, 0]
-2025-02-04 11:55:10,399	logs_personalizados	INFO	tone from t
-2025-02-04 11:55:10,399	logs_personalizados	INFO	[7, 8, 7, 8, 7, 9, 7, 8, 7, 8, 7, 7, 7]
-2025-02-04 11:55:10,399	logs_personalizados	INFO	languages from t
-2025-02-04 11:55:10,399	logs_personalizados	INFO	[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-2025-02-04 11:55:10,399	logs_personalizados	INFO	norm_text from t
-2025-02-04 11:55:10,399	logs_personalizados	INFO	unnafable.
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph from t
-2025-02-04 11:55:10,399	logs_personalizados	INFO	[1, 3, 3, 2, 2, 1, 1]
-2025-02-04 11:55:10,399	logs_personalizados	INFO	pepe
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph[i] * 2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph[i] * 2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	6
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph[i] * 2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	6
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph[i] * 2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	4
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph[i] * 2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	4
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph[i] * 2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	word2ph[i] * 2
-2025-02-04 11:55:10,399	logs_personalizados	INFO	2
-2025-02-04 11:55:13,193	logs_personalizados	INFO	tensor([[  0,   0,   0,  23,   0,  73,   0,  23,   0,  45,   0,  22,   0,  46,
-           0,  23,   0,  30,   0,  23,   0,  70,   0, 212,   0,   0,   0]])
-2025-02-04 11:55:13,390	logs_personalizados	INFO	tensor([[0, 7, 0, 8, 0, 7, 0, 8, 0, 7, 0, 9, 0, 7, 0, 8, 0, 7, 0, 8, 0, 7, 0, 7,
-         0, 7, 0]])
-2025-02-04 11:55:13,391	logs_personalizados	INFO	tensor([[0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2,
-         0, 2, 0]])
-2025-02-04 11:55:13,392	logs_personalizados	INFO	tensor([[[0., 0., 0.,  ..., 0., 0., 0.],
-         [0., 0., 0.,  ..., 0., 0., 0.],
-         [0., 0., 0.,  ..., 0., 0., 0.],
+2025-02-06 09:28:39,770	logs_personalizados	INFO	model = SynthesizerTrn(len(symbols), hps.data.filter_length // 2 + 1, hps.train.segment_size // hps.data.hop_length, n_speakers=hps.data.n_speakers, num_tones=num_tones, num_languages=num_languages, **hps.model,).to(device)
+2025-02-06 09:28:39,772	logs_personalizados	INFO	model.eval()
+2025-02-06 09:28:39,772	logs_personalizados	INFO	self.model = model
+2025-02-06 09:28:41,378	logs_personalizados	INFO	Logger inicializado con éxito
+2025-02-06 09:28:41,392	logs_personalizados	INFO	tx=texts object
+2025-02-06 09:28:41,392	logs_personalizados	INFO	['Unnafable.']
+2025-02-06 09:28:41,392	logs_personalizados	INFO	Including t from tx
+2025-02-06 09:28:41,392	logs_personalizados	INFO	['Unnafable.']
+2025-02-06 09:28:41,398	logs_personalizados	INFO	Bert-tokens
+2025-02-06 09:28:41,398	logs_personalizados	INFO	['un', '##na', '##fa', '##ble', '.']
+2025-02-06 09:28:41,398	logs_personalizados	INFO	Group phones
+2025-02-06 09:28:41,398	logs_personalizados	INFO	[['un', 'na', 'fa', 'ble'], ['.']]
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['N']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['F']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['AE1']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['G']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['B']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,496	logs_personalizados	INFO	['L']
+2025-02-06 09:28:41,497	logs_personalizados	INFO	DERRAME
+2025-02-06 09:28:41,497	logs_personalizados	INFO	['ah', 'n', 'ah', 'f', 'ae', 'g', 'ah', 'b', 'ah', 'l', '.']
+2025-02-06 09:28:41,499	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,499	logs_personalizados	INFO	['N']
+2025-02-06 09:28:41,499	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,499	logs_personalizados	INFO	['F']
+2025-02-06 09:28:41,499	logs_personalizados	INFO	['AE1']
+2025-02-06 09:28:41,499	logs_personalizados	INFO	['G']
+2025-02-06 09:28:41,499	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,500	logs_personalizados	INFO	['B']
+2025-02-06 09:28:41,500	logs_personalizados	INFO	['AH0']
+2025-02-06 09:28:41,500	logs_personalizados	INFO	['L']
+2025-02-06 09:28:41,500	logs_personalizados	INFO	Phones-g2p
+2025-02-06 09:28:41,500	logs_personalizados	INFO	['ah', 'n', 'ah', 'f', 'ae', 'g', 'ah', 'b', 'ah', 'l', '.']
+2025-02-06 09:28:41,500	logs_personalizados	INFO	tones-g2p
+2025-02-06 09:28:41,500	logs_personalizados	INFO	[1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 0]
+2025-02-06 09:28:41,500	logs_personalizados	INFO	word2ph-g2p
+2025-02-06 09:28:41,500	logs_personalizados	INFO	[3, 3, 2, 2, 1]
+2025-02-06 09:28:41,500	logs_personalizados	INFO	phones from t
+2025-02-06 09:28:41,500	logs_personalizados	INFO	[0, 23, 73, 23, 45, 22, 46, 23, 30, 23, 70, 212, 0]
+2025-02-06 09:28:41,500	logs_personalizados	INFO	tone from t
+2025-02-06 09:28:41,500	logs_personalizados	INFO	[7, 8, 7, 8, 7, 9, 7, 8, 7, 8, 7, 7, 7]
+2025-02-06 09:28:41,500	logs_personalizados	INFO	languages from t
+2025-02-06 09:28:41,500	logs_personalizados	INFO	[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+2025-02-06 09:28:41,500	logs_personalizados	INFO	norm_text from t
+2025-02-06 09:28:41,500	logs_personalizados	INFO	unnafable.
+2025-02-06 09:28:41,500	logs_personalizados	INFO	word2ph from t
+2025-02-06 09:28:41,500	logs_personalizados	INFO	[1, 3, 3, 2, 2, 1, 1]
+2025-02-06 09:28:41,500	logs_personalizados	INFO	pepe
+2025-02-06 09:28:43,702	logs_personalizados	INFO	x_tst
+2025-02-06 09:28:43,702	logs_personalizados	INFO	[[  0   0   0  23   0  73   0  23   0  45   0  22   0  46   0  23   0  30
+    0  23   0  70   0 212   0   0   0]]
+2025-02-06 09:28:43,703	logs_personalizados	INFO	tones
+2025-02-06 09:28:43,703	logs_personalizados	INFO	[[0 7 0 8 0 7 0 8 0 7 0 9 0 7 0 8 0 7 0 8 0 7 0 7 0 7 0]]
+2025-02-06 09:28:43,703	logs_personalizados	INFO	langs_ids
+2025-02-06 09:28:43,703	logs_personalizados	INFO	[[0 2 0 2 0 2 0 2 0 2 0 2 0 2 0 2 0 2 0 2 0 2 0 2 0 2 0]]
+2025-02-06 09:28:43,703	logs_personalizados	INFO	bert
+2025-02-06 09:28:43,703	logs_personalizados	INFO	[[[0. 0. 0. ... 0. 0. 0.]
+  [0. 0. 0. ... 0. 0. 0.]
+  [0. 0. 0. ... 0. 0. 0.]
+  ...
+  [0. 0. 0. ... 0. 0. 0.]
+  [0. 0. 0. ... 0. 0. 0.]
+  [0. 0. 0. ... 0. 0. 0.]]]
+2025-02-06 09:28:43,703	logs_personalizados	INFO	ja_bert
+2025-02-06 09:28:43,704	logs_personalizados	INFO	[[[-1.0574359  -1.0574359  -1.0574359  ... -1.4436773   0.03427309
+    0.03427309]
+  [-0.04054876 -0.04054876 -0.04054876 ... -0.07422405  0.00286602
+    0.00286602]
+  [-0.34533224 -0.34533224 -0.34533224 ... -0.9223786  -0.0538373
+   -0.0538373 ]
+  ...
+  [-0.29366538 -0.29366538 -0.29366538 ... -0.31056076  0.04241501
+    0.04241501]
+  [-0.90978765 -0.90978765 -0.90978765 ... -0.73922986 -0.0853441
+   -0.0853441 ]
+  [ 0.662075    0.662075    0.662075   ...  0.40125522 -0.01312517
+   -0.01312517]]]
+2025-02-06 09:28:43,732	logs_personalizados	INFO	ja_bert (1, 768, 27) saved in tensor_ja_bert.csv
+2025-02-06 09:28:43,732	logs_personalizados	INFO	x_tst_lengths
+2025-02-06 09:28:43,732	logs_personalizados	INFO	[27]
+2025-02-06 09:28:43,732	logs_personalizados	INFO	sdp_ratio
+2025-02-06 09:28:43,732	logs_personalizados	INFO	0.2
+2025-02-06 09:28:43,732	logs_personalizados	INFO	noise_scale
+2025-02-06 09:28:43,732	logs_personalizados	INFO	0.6
+2025-02-06 09:28:43,732	logs_personalizados	INFO	noise_scale_w
+2025-02-06 09:28:43,732	logs_personalizados	INFO	0.8
+2025-02-06 09:28:43,732	logs_personalizados	INFO	speed
+2025-02-06 09:28:43,732	logs_personalizados	INFO	1.5
+2025-02-06 09:28:43,732	logs_personalizados	INFO	self.model.infer( x_tst, x_tst_lengths, speakers, tones, lang_ids, bert,ja_bert, sdp_ratio=sdp_ratio, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=1. / speed,)
+2025-02-06 09:28:44,103	logs_personalizados	INFO	x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths, tone, language, bert, ja_bert, g=g_p)
+2025-02-06 09:28:44,103	logs_personalizados	INFO	x
+2025-02-06 09:28:44,103	logs_personalizados	INFO	[[[ 0.00788755  0.00874676  0.00624419 ... -0.00630613  0.01004684
+    0.02172038]
+  [-0.6732747   0.08261249  0.32974464 ... -0.70542717 -0.12997459
+   -0.7672815 ]
+  [ 0.00314451  0.0027741   0.01437787 ... -0.00643259 -0.00401825
+   -0.0013273 ]
+  ...
+  [-0.00164497 -0.01392525  0.00278618 ... -0.01239679 -0.0095648
+   -0.01490425]
+  [-0.00354704  0.00428316  0.00592226 ... -0.00224108 -0.00506966
+   -0.00656165]
+  [ 0.01479103  0.0299886   0.00587227 ...  0.00681932  0.00448784
+    0.00332133]]]
+2025-02-06 09:28:44,112	logs_personalizados	INFO	Saved tensor x with sape (1, 192, 27) in tensor_h_text.csv
+2025-02-06 09:28:44,112	logs_personalizados	INFO	m_p
+2025-02-06 09:28:44,112	logs_personalizados	INFO	[[[-0.01576887  0.14934394  0.28089985 ... -0.01225574 -0.10162284
+   -0.07735263]
+  [-0.23622158  0.05459936  0.27802637 ... -0.35997108 -0.09853502
+   -0.33062026]
+  [-0.01093589 -0.04143153 -0.05114113 ... -0.02451568 -0.03122449
+    0.00120912]
+  ...
+  [-0.05448033 -0.00710521  0.0392781  ... -0.06442405 -0.07843769
+   -0.08949794]
+  [-0.06397434 -0.09526861 -0.06202484 ... -0.049117   -0.08028133
+   -0.07186566]
+  [ 0.08745751  0.103865    0.15945438 ...  0.15531394  0.09370345
+    0.11933503]]]
+2025-02-06 09:28:44,124	logs_personalizados	INFO	Saved tensor m_p with sape (1, 192, 27) in tensor_m_p.csv
+2025-02-06 09:28:44,124	logs_personalizados	INFO	logs_p
+2025-02-06 09:28:44,125	logs_personalizados	INFO	[[[-0.3999501  -0.4032799  -0.41673458 ... -0.40684003 -0.4073012
+   -0.40332922]
+  [-0.16104835 -0.16807242 -0.19923484 ... -0.18748213 -0.19025514
+   -0.18271911]
+  [-0.48795295 -0.4765337  -0.47259188 ... -0.4971471  -0.49981356
+   -0.49663657]
+  ...
+  [-0.41231734 -0.41426703 -0.4219851  ... -0.42123657 -0.42457676
+   -0.41590765]
+  [ 0.01830176  0.01982002  0.00911833 ...  0.01091843  0.02487107
+    0.01736444]
+  [-0.0454413  -0.02057019 -0.02228589 ... -0.06312495 -0.05616265
+   -0.06178979]]]
+2025-02-06 09:28:44,134	logs_personalizados	INFO	Saved tensor logs_p with sape (1, 192, 27) in tensor_logs_p.csv
+2025-02-06 09:28:44,134	logs_personalizados	INFO	x_mask
+2025-02-06 09:28:44,134	logs_personalizados	INFO	[[[1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+   1. 1. 1. 1.]]]
+2025-02-06 09:28:44,272	logs_personalizados	INFO	Salidas del (sdp_ratio) * sdp + (1-sdp_ratio) * dp = logw; y w = logw*x_mask * length_Scale
+2025-02-06 09:28:44,273	logs_personalizados	INFO	[[[0.7493266  0.5338109  0.92403734 0.8475736  1.0637864  0.25161207
+   0.8238961  0.17296022 1.4224784  0.9587352  1.7238395  1.4658953
+   1.2378936  0.7379192  0.55150795 1.3966444  1.5068275  0.48222148
+   0.8954036  0.5558938  0.8860638  0.34327346 1.0186808  0.1541763
+   0.1427595  0.67206115 0.55743814]]]
+2025-02-06 09:28:44,277	logs_personalizados	INFO	Saved tensor logw with sape (1, 1, 27) in tensor_logw.csv
+2025-02-06 09:28:44,278	logs_personalizados	INFO	[[[1.4103832  1.1369462  1.6796278  1.5559845  1.9315472  0.85739803
+   1.5195756  0.7925459  2.7649248  1.7389302  3.7373414  2.887613
+   2.298895   1.394386   1.1572459  2.69441    3.0082617  1.079779
+   1.6322159  1.1623324  1.6170423  0.93970287 1.8463593  0.7777977
+   0.7689683  1.3055129  1.1641289 ]]]
+2025-02-06 09:28:44,286	logs_personalizados	INFO	attn
+2025-02-06 09:28:44,286	logs_personalizados	INFO	tensor([[[[1., 0., 0.,  ..., 0., 0., 0.],
+          [1., 0., 0.,  ..., 0., 0., 0.],
+          [0., 1., 0.,  ..., 0., 0., 0.],
+          ...,
+          [0., 0., 0.,  ..., 0., 1., 0.],
+          [0., 0., 0.,  ..., 0., 0., 1.],
+          [0., 0., 0.,  ..., 0., 0., 1.]]]], device='cuda:0')
+2025-02-06 09:28:44,297	logs_personalizados	INFO	Saved tensor attn with sape (1, 1, 57, 27) in tensor_attn.csv
+2025-02-06 09:28:44,299	logs_personalizados	INFO	Entrada al flujo inverso: z_p
+2025-02-06 09:28:44,299	logs_personalizados	INFO	tensor([[[ 0.6175,  0.3700,  0.6980,  ..., -0.0038,  0.0337,  0.3802],
+         [-0.3379, -0.7155, -0.0495,  ..., -0.2373, -0.1513, -1.1730],
+         [ 0.3543,  0.2130, -0.2517,  ...,  0.1487, -0.3678, -0.1083],
          ...,
-         [0., 0., 0.,  ..., 0., 0., 0.],
-         [0., 0., 0.,  ..., 0., 0., 0.],
-         [0., 0., 0.,  ..., 0., 0., 0.]]])
-2025-02-04 11:55:13,394	logs_personalizados	INFO	tensor([[[-1.0574, -1.0574, -1.0574,  ..., -1.4437,  0.0343,  0.0343],
-         [-0.0405, -0.0405, -0.0405,  ..., -0.0742,  0.0029,  0.0029],
-         [-0.3453, -0.3453, -0.3453,  ..., -0.9224, -0.0538, -0.0538],
-         ...,
-         [-0.2937, -0.2937, -0.2937,  ..., -0.3106,  0.0424,  0.0424],
-         [-0.9098, -0.9098, -0.9098,  ..., -0.7392, -0.0853, -0.0853],
-         [ 0.6621,  0.6621,  0.6621,  ...,  0.4013, -0.0131, -0.0131]]])
-2025-02-04 11:55:13,396	logs_personalizados	INFO	tensor([27])
+         [ 0.2663, -0.1970, -0.1072,  ..., -0.0540, -0.1553,  0.1720],
+         [-0.6391, -1.2647, -0.3661,  ..., -0.4908, -0.6804,  0.4588],
+         [ 1.0589, -0.5487,  0.9497,  ...,  0.7996,  0.5252, -0.9467]]],
+       device='cuda:0')
+2025-02-06 09:28:44,314	logs_personalizados	INFO	Saved tensor z_p with sape (1, 192, 57) in tensor_z_p.csv
+2025-02-06 09:28:44,565	logs_personalizados	INFO	Salida del flujo inverso: z
+2025-02-06 09:28:44,565	logs_personalizados	INFO	[[[ 0.29543853  0.03394286  0.48109534 ... -0.12983665 -0.11612479
+    0.2244989 ]
+  [-1.2247045  -0.67434335  0.6096517  ... -1.3701313  -1.2811197
+   -2.3106813 ]
+  [ 0.24522915  0.11167894 -0.30567843 ...  0.11678841 -0.39844337
+   -0.13341206]
+  ...
+  [-0.02322976 -0.33272752 -0.08039829 ... -0.29585952 -0.4037921
+   -0.08490551]
+  [-0.7177005  -1.2099166  -0.16147086 ... -0.5900724  -0.7894558
+    0.34579065]
+  [ 1.8889122   0.09852278  1.2510511  ...  1.5078526   1.3207251
+   -0.120691  ]]]
+2025-02-06 09:28:44,583	logs_personalizados	INFO	Saved tensor z with sape (1, 192, 57) in tensor_z.csv
+2025-02-06 09:28:44,650	logs_personalizados	INFO	Salidas del dec: o
+2025-02-06 09:28:44,650	logs_personalizados	INFO	[[[-0.00091035 -0.00108906 -0.00113774 ... -0.00265242 -0.00203293
+   -0.00173756]]]
+2025-02-06 09:28:44,681	logs_personalizados	INFO	Saved tensor o with sape (1, 1, 29184) in tensor_o.csv

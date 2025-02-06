@@ -52,9 +52,11 @@ class TTS(nn.Module):
             num_languages=num_languages,
             **hps.model,
         ).to(device)
-
+        logger.log.info("model = SynthesizerTrn(len(symbols), hps.data.filter_length // 2 + 1, hps.train.segment_size // hps.data.hop_length, n_speakers=hps.data.n_speakers, num_tones=num_tones, num_languages=num_languages, **hps.model,).to(device)")
         model.eval()
+        logger.log.info("model.eval()")
         self.model = model
+        logger.log.info("self.model = model")
         self.symbol_to_id = {s: i for i, s in enumerate(symbols)}
         self.hps = hps
         self.device = device
@@ -131,12 +133,32 @@ class TTS(nn.Module):
                 bert = bert.to(device).unsqueeze(0)
                 ja_bert = ja_bert.to(device).unsqueeze(0)
                 x_tst_lengths = torch.LongTensor([phones.size(0)]).to(device)
-                logger.log.info(x_tst.cpu())
-                logger.log.info(tones.cpu())
-                logger.log.info(lang_ids.cpu())
-                logger.log.info(bert.cpu())
-                logger.log.info(ja_bert.cpu())
-                logger.log.info(x_tst_lengths.cpu())
+                logger.log.info("x_tst")
+                logger.log.info(x_tst.cpu().numpy())
+                logger.log.info("tones")
+                logger.log.info(tones.cpu().numpy())
+                logger.log.info("langs_ids")
+                logger.log.info(lang_ids.cpu().numpy())
+                logger.log.info("bert")
+                logger.log.info(bert.cpu().numpy())
+                logger.log.info("ja_bert")
+                logger.log.info(ja_bert.cpu().numpy())
+                # tensor_cpu = ja_bert.cpu().numpy()  # Convertir tensor a numpy y mover a CPU
+                # print(tensor_cpu.shape)
+                np.savetxt("./logs_personalizados/tensor_ja_bert.csv", ja_bert.squeeze(0).cpu().numpy(), delimiter=",")  
+                print("Tensor ja_bert guardado en tensor_ja_bert.csv")
+                logger.log.info("ja_bert (1, 768, 27) saved in tensor_ja_bert.csv")
+                logger.log.info("x_tst_lengths")
+                logger.log.info(x_tst_lengths.cpu().numpy())
+                logger.log.info("sdp_ratio")
+                logger.log.info(sdp_ratio)
+                logger.log.info("noise_scale")
+                logger.log.info(noise_scale)
+                logger.log.info("noise_scale_w")
+                logger.log.info(noise_scale_w)
+                logger.log.info("speed")
+                logger.log.info(speed)
+                logger.log.info("self.model.infer( x_tst, x_tst_lengths, speakers, tones, lang_ids, bert,ja_bert, sdp_ratio=sdp_ratio, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=1. / speed,)")
                 del phones
                 speakers = torch.LongTensor([speaker_id]).to(device)
                 audio = self.model.infer(
