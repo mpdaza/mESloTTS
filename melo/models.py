@@ -15,6 +15,7 @@ from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
 from melo.commons import init_weights, get_padding
 import melo.monotonic_align as monotonic_align
 
+logger.init()
 
 class DurationDiscriminator(nn.Module):  # vits2
     def __init__(
@@ -307,6 +308,7 @@ class DurationPredictor(nn.Module):
         x = self.norm_2(x)
         x = self.drop(x)
         x = self.proj(x * x_mask)
+        logger.log_train.info("INSIDE MODELS.PY")
         return x * x_mask
 
 

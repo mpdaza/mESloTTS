@@ -18,7 +18,7 @@ from models import SynthesizerTrn
 from split_utils import split_sentence
 from mel_processing import spectrogram_torch, spectrogram_torch_conv
 from download_utils import load_or_download_config, load_or_download_model
-
+logger.init()
 class TTS(nn.Module):
     def __init__(self, 
                 language,
@@ -80,7 +80,7 @@ class TTS(nn.Module):
         # except Exception as e:
         #     print(f"Error al inicializar el logger: {e}")
 
-
+        logger.log_train.info("API.py")
 
 
         

@@ -12,8 +12,9 @@ from text import cleaned_text_to_sequence, get_bert
 from text.cleaner import clean_text
 import commons
 import logger
+import logging
 MATPLOTLIB_FLAG = False
-
+# logger_train = logging.getLogger(__name__)
 
 
 
@@ -110,11 +111,11 @@ def load_checkpoint(checkpoint_path, model, optimizer=None, skip_optimizer=False
             # For upgrading from the old version
             if "ja_bert_proj" in k:
                 v = torch.zeros_like(v)
-                logger.warn(
+                logger.log_train.warn(
                     f"Seems you are using the old version of the model, the {k} is automatically set to zero for backward compatibility"
                 )
             else:
-                logger.error(f"{k} is not in the checkpoint")
+                logger.log_train.error(f"{k} is not in the checkpoint")
 
             new_state_dict[k] = v
 
@@ -123,7 +124,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None, skip_optimizer=False
     else:
         model.load_state_dict(new_state_dict, strict=False)
 
-    logger.info(
+    logger.log_train.info(
         "Loaded checkpoint '{}' (iteration {})".format(checkpoint_path, iteration)
     )
 
@@ -131,7 +132,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None, skip_optimizer=False
 
 
 def save_checkpoint(model, optimizer, learning_rate, iteration, checkpoint_path):
-    logger.info(
+    logger.log_train.info(
         "Saving model and optimizer state at iteration {} to {}".format(
             iteration, checkpoint_path
         )
@@ -345,7 +346,7 @@ def clean_checkpoints(path_to_models="logs/44k/", n_ckpts_to_keep=2, sort_by_tim
     ]
 
     def del_info(fn):
-        return logger.info(f".. Free up space by deleting ckpt {fn}")
+        return logger.log_train.info(f".. Free up space by deleting ckpt {fn}")
 
     def del_routine(x):
         return [os.remove(x), del_info(x)]
@@ -376,7 +377,7 @@ def get_hparams_from_file(config_path):
 def check_git_hash(model_dir):
     source_dir = os.path.dirname(os.path.realpath(__file__))
     if not os.path.exists(os.path.join(source_dir, ".git")):
-        logger.warn(
+        logger.log_train.warn(
             "{} is not a git repository, therefore hash value comparison will be ignored.".format(
                 source_dir
             )
@@ -389,7 +390,7 @@ def check_git_hash(model_dir):
     if os.path.exists(path):
         saved_hash = open(path).read()
         if saved_hash != cur_hash:
-            logger.warn(
+            logger.logg_train.warn(
                 "git hash values are different. {}(saved) != {}(current)".format(
                     saved_hash[:8], cur_hash[:8]
                 )
@@ -398,6 +399,19 @@ def check_git_hash(model_dir):
         open(path, "w").write(cur_hash)
 
 
+# def get_logger(model_dir, filename="train.log"):
+#     global logger
+#     logger_train = logging.getLogger(os.path.basename(model_dir))
+#     logger_train.setLevel(logging.DEBUG)
+
+#     formatter = logging.Formatter("%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s")
+#     if not os.path.exists(model_dir):
+#         os.makedirs(model_dir, exist_ok=True)
+#     h = logging.FileHandler(os.path.join(model_dir, filename))
+#     h.setLevel(logging.DEBUG)
+#     h.setFormatter(formatter)
+#     logger_train.addHandler(h)
+#     return logger_train
 
 
 

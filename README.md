@@ -1,10 +1,11 @@
 # USAGE OF MELOTTS
 
-1. Clone the repository by:
+0. Clone the repository by:
 
 ```sh
 git clone git@github.com:natlamir/MeloTTS-Windows.git
 ```
+1. Skip the step cero and clone this repo
 
 2. Create conda environment and activate, for this project is melotts-win in LOCAL WINDOWS
 
@@ -25,8 +26,9 @@ source melotts/bin/activate
 cd melotts-windows
 pip install -e .
 pip install pydub
+pip install -r requirements.txt
 python -m unidic download
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+<!-- pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 -->
 python setup.py install 
 ```
 
@@ -65,6 +67,7 @@ python preprocess_text.py --metadata data/example/metadata.list
 - for the INFERENCE use the MeloTTS-Spanish GitHub but change the symbols for the MeloTTS-Windows one
 
 ### TRAIN
+For train it is needed: config.json and wavs in melo/data/example
 10. Train the model FOR WINDOWS
 ```sh
 train.bat 
@@ -75,6 +78,7 @@ For UBUNTU
 ```
 
 ### INFERENCE
+For inference it is needed: G_X.pth and config.json in the same path!
 11. For the inference it is important to define some phrase, generator.pth and the output
 ```sh
 python infer.py --text <phrase> -m <root/.../G.pth> -o <root/.../output>
@@ -90,3 +94,19 @@ melo-ui
 tensorboard --logdir=<root/.../config.json> 
 python -m tensorboard.main --logdir=<root/.../model>
 ```
+## WAND
+Because of weigths and biases is implemented it it need to create an account in https://wandb.ai/home  
+14. Install wandb in local and login to the platform
+```sh
+pip install wandb
+wandb login
+```
+It is probably that you will need to add an ssh-key to login.
+
+15. Create a project in the api that would have the same name as the line 37 of train.py that is in the melo folder.
+```sh
+    wand_project_melo = 'mi-project'
+    wandb.init(project=wand_project_melo)
+```
+
+In the wand api you will see in the project the different runs you make to the project. 

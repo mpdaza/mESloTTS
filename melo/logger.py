@@ -2,11 +2,15 @@ import logging
 import os
 
 logger = logging.getLogger(__name__)
+# # Definir loggers a nivel de módulo
+# log = None
+# log_train = None
 
 def init():
-    global log
+    global log, log_train
     log_path =  'logs_personalizados'
     log = get_logger(log_path)
+    log_train = get_logger('logs/config')
 
 def get_logger(model_dir, filename="train.log"):
     global logger   

@@ -10,7 +10,7 @@ import pdb
 import debugpy
 import json
 import wandb
-
+import logger
 logging.getLogger("numba").setLevel(logging.WARNING)
 import commons
 import utils
@@ -31,22 +31,22 @@ torch.set_float32_matmul_precision("medium")
 
 torch.backends.cudnn.benchmark = True
 global_step = 0
+# logger.init()
 
 def run():
     # Init wandb
     wand_project_melo = 'melotts-optimization'
     wandb.init(project=wand_project_melo)
     # Registerparams and the gradient descent
-    
-        
     hps = utils.get_hparams()
     
     torch.manual_seed(hps.train.seed)
     
     global global_step
     
-    logger = utils.get_logger(hps.model_dir)
-    logger.info(hps)
+    # logger_train = utils.get_logger(hps.model_dir)
+    logger.log_train.info("TRAIN.PY")
+    logger.log_train.info(hps)
     utils.check_git_hash(hps.model_dir)
     writer = SummaryWriter(log_dir=hps.model_dir)
     writer_eval = SummaryWriter(log_dir=os.path.join(hps.model_dir, "eval"))
@@ -64,7 +64,6 @@ def run():
         prefetch_factor=4,
     )
     
-    print('PÀTATAAAAAAAAAAAAAAAAAAAAAAAAA')
 
 
     # Supongamos que train_loader ya está definido y contiene un batch_sampler.
@@ -235,7 +234,9 @@ def train_and_evaluate(
     scheduler_g, scheduler_d, scheduler_dur_disc = schedulers
     train_loader, eval_loader = loaders
     writer, writer_eval = writers
-
+    print(type(logger))
+    print(type(logger.log))
+    print(type(logger.log_train))
     global global_step
     # Init the loss sum like infinity
     best_loss_sum = float('inf')  
@@ -350,12 +351,12 @@ def train_and_evaluate(
         if global_step % hps.train.log_interval == 0:
             lr = optim_g.param_groups[0]["lr"]
             losses = [loss_disc, loss_gen, loss_fm, loss_mel, loss_dur, loss_kl]
-            logger.info(
+            logger.log_train.info(
                 "Train Epoch: {} [{:.0f}%]".format(
                     epoch, 100.0 * batch_idx / len(train_loader)
                 )
             )
-            logger.info([x.item() for x in losses] + [global_step, lr])
+            logger.log_train.info([x.item() for x in losses] + [global_step, lr])
 
             scalar_dict = {
                 "loss/g/total": loss_gen_all,
@@ -445,7 +446,7 @@ def train_and_evaluate(
         wandb.save("best_model.pth")
         global_step += 1
 
-    logger.info("====> Epoch: {}".format(epoch))
+    logger.log_train.info("====> Epoch: {}".format(epoch))
 
 
 def evaluate(hps, generator, eval_loader, writer_eval):
@@ -463,7 +464,7 @@ def evaluate(hps, generator, eval_loader, writer_eval):
             ja_bert = ja_bert.cuda()
             tone = tone.cuda()
             language = language.cuda()
-            print(language)
+            # print(language)
             for use_sdp in [True, False]:
                 y_hat, attn, mask, *_ = generator.infer(
                     x,
@@ -532,4 +533,5 @@ def evaluate(hps, generator, eval_loader, writer_eval):
 
 
 if __name__ == "__main__":
+    logger.init()
     run()
