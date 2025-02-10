@@ -29,7 +29,6 @@ pip install -e .
 pip install pydub
 pip install -r requirements.txt
 python -m unidic download
-<!-- pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 -->
 python setup.py install 
 ```
 
