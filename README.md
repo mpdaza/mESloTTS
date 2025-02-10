@@ -24,6 +24,7 @@ source melotts/bin/activate
 4. Installing other dependences
 ```sh
 cd melotts-windows
+pip install nltk
 pip install -e .
 pip install pydub
 pip install -r requirements.txt
