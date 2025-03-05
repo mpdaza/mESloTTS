@@ -1,4 +1,5 @@
-# USAGE OF MELOTTS
+# USAGE OF mESloTTS
+TTS tool for male spanish voices.
 
 1. Clone the repository by:
 
@@ -12,15 +13,15 @@ git git@github.com:mpdaza/mESloTTS.git
 conda create -n <melotts/> python=3.10 
 conda activate melotts
 ```
-3. Create env and activate in the SERVER LINUX
+<!-- 3. Create env and activate in the SERVER LINUX
 ```sh
 cd MELO-OPTIMIZACION/melo/data
 sudo apt install python3-venv
 python3.10 -m venv melotts
 source melotts/bin/activate
-```
+``` -->
 
-4. Installing other dependences
+3. Installing other dependences
 ```sh
 cd melotts
 pip install -e .
@@ -32,7 +33,7 @@ python setup.py install
 For inference it is needed: G_X.pth and config.json in the same path! In this case, the models are in the folder melo/data/example/e1/models and the outputs will be save in the melo/data/example/ex1/outputs. It is necessary to change <e1> and <G.pth>.
 
 
-5. For the inference it is important to define some phrase, generator.pth and the output
+4. For the inference it is important to define some phrase, generator.pth and the output
 ```sh
 python infer.py --text "input text" -m data/example/e1/models/G.pth -o data/example/e1/outputs
 ```
