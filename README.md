@@ -10,7 +10,7 @@ git git@github.com:mpdaza/mESloTTS.git
 2. Create conda environment and activate, for this project is melotts-win in LOCAL WINDOWS
 
 ```sh
-conda create -n <melotts/> python=3.10 
+conda create -n melotts python=3.10 
 conda activate melotts
 ```
 <!-- 3. Create env and activate in the SERVER LINUX
@@ -23,7 +23,7 @@ source melotts/bin/activate
 
 3. Installing other dependences
 ```sh
-cd melotts
+cd MESLOTTS
 pip install -e .
 pip install -r requirements.txt
 python setup.py install 
@@ -35,6 +35,7 @@ For inference it is needed: G_X.pth and config.json in the same path! In this ca
 
 4. For the inference it is important to define some phrase, generator.pth and the output
 ```sh
+cd MESLOTTS/melo
 python infer.py --text "input text" -m data/example/e1/models/G.pth -o data/example/e1/outputs
 ```
 
