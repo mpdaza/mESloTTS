@@ -11,10 +11,10 @@ import librosa
 from text import cleaned_text_to_sequence, get_bert
 from text.cleaner import clean_text
 import commons
-import logger
 import logging
+import logger
 MATPLOTLIB_FLAG = False
-# logger_train = logging.getLogger(__name__)
+logger_train = logging.getLogger(__name__)
 
 
 
@@ -22,32 +22,17 @@ MATPLOTLIB_FLAG = False
 def get_text_for_tts_infer(text, language_str, hps, device, symbol_to_id=None):
     norm_text, phone, tone, word2ph = clean_text(text, language_str)
     phone, tone, language = cleaned_text_to_sequence(phone, tone, language_str, symbol_to_id)
-    logger.log.info("phones from t")
-    logger.log.info(phone)
-    logger.log.info("tone from t")
-    logger.log.info(tone)
-    logger.log.info("languages from t")
-    logger.log.info(language)
-    logger.log.info("norm_text from t")
-    logger.log.info(norm_text)
-    logger.log.info("word2ph from t")
-    logger.log.info(word2ph)
     if hps.data.add_blank:
         phone = commons.intersperse(phone, 0)
-        logger.log.info("pepe")
         tone = commons.intersperse(tone, 0)
         language = commons.intersperse(language, 0)
 
         for i in range(len(word2ph)):
             word2ph[i] = word2ph[i] * 2
-            # logger.log.info("word2ph[i] * 2")
-            # logger.log.info(word2ph[i])
         word2ph[0] += 1
 
     if getattr(hps.data, "disable_bert", False):
         bert = torch.zeros(1024, len(phone))
-        logger.log.info('bert')
-        logger.log.info(bert)
         ja_bert = torch.zeros(768, len(phone))
     else:
         bert = get_bert(norm_text, word2ph, language_str, device)

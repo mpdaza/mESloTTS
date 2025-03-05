@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 def init():
     global log, log_train
-    log_path =  'logs_personalizados'
-    log = get_logger(log_path)
-    log_train = get_logger('logs/config')
+    #log_path =  'logs_personalizados'
+    #log = get_logger(log_path)
+    #log_train = get_logger('logs/config')
 
 def get_logger(model_dir, filename="train.log"):
     global logger   

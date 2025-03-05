@@ -1,38 +1,44 @@
 # USAGE OF MELOTTS
 
-0. Clone the repository by:
+1. Clone the repository by:
 
 ```sh
-git clone git@github.com:natlamir/MeloTTS-Windows.git
+git git@github.com:mpdaza/mESloTTS.git
 ```
-1. Skip the step cero and clone this repo
 
 2. Create conda environment and activate, for this project is melotts-win in LOCAL WINDOWS
 
 ```sh
-conda create -n <melotts-win/> python=3.10 
-conda activate melotts-win
+conda create -n <melotts/> python=3.10 
+conda activate melotts
 ```
 3. Create env and activate in the SERVER LINUX
 ```sh
-cd Melotts-windows/melo/data
+cd MELO-OPTIMIZACION/melo/data
 sudo apt install python3-venv
-python3 -m venv melotts
+python3.10 -m venv melotts
 source melotts/bin/activate
 ```
 
 4. Installing other dependences
 ```sh
-cd melotts-windows
-pip install nltk
+cd melotts
 pip install -e .
-pip install pydub
 pip install -r requirements.txt
-python -m unidic download
 python setup.py install 
 ```
 
-5. If the files use the codec MP3 it is necessary to implement this step to covert to wav, otherwise ignore it. 
+### INFERENCE
+For inference it is needed: G_X.pth and config.json in the same path! In this case, the models are in the folder melo/data/example/e1/models and the outputs will be save in the melo/data/example/ex1/outputs. It is necessary to change <e1> and <G.pth>.
+
+
+5. For the inference it is important to define some phrase, generator.pth and the output
+```sh
+python infer.py --text "input text" -m data/example/e1/models/G.pth -o data/example/e1/outputs
+```
+
+
+<!-- 5. If the files use the codec MP3 it is necessary to implement this step to covert to wav, otherwise ignore it. 
 
 FOR WINDOWS
 ```sh
@@ -77,13 +83,6 @@ For UBUNTU
 ./train.sh 
 ```
 
-### INFERENCE
-For inference it is needed: G_X.pth and config.json in the same path!
-11. For the inference it is important to define some phrase, generator.pth and the output
-```sh
-python infer.py --text <phrase> -m <root/.../G.pth> -o <root/.../output>
-```
-
 12. Using only the API creating one dir: CUSTOM with 2 files, the g.pth and the config.json
 ```sh
 melo-ui
@@ -109,4 +108,4 @@ It is probably that you will need to add an ssh-key to login.
     wandb.init(project=wand_project_melo)
 ```
 
-In the wand api you will see in the project the different runs you make to the project. 
+In the wand api you will see in the project the different runs you make to the project.  -->

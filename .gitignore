@@ -18,3 +18,4 @@ melo/wandb
 melo/data/*/
 !melo/data/example/
 melo/data/example/wavs
+melo/data/example/mateo

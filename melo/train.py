@@ -31,12 +31,12 @@ torch.set_float32_matmul_precision("medium")
 
 torch.backends.cudnn.benchmark = True
 global_step = 0
-# logger.init()
+logger.init()
 
 def run():
     # Init wandb
-    wand_project_melo = 'melotts-optimization'
-    wandb.init(project=wand_project_melo)
+    # wand_project_melo = 'melotts-optimization'
+    # wandb.init(project=wand_project_melo)
     # Registerparams and the gradient descent
     hps = utils.get_hparams()
     
@@ -44,7 +44,7 @@ def run():
     
     global global_step
     
-    # logger_train = utils.get_logger(hps.model_dir)
+    logger_train = utils.get_logger(hps.model_dir)
     logger.log_train.info("TRAIN.PY")
     logger.log_train.info(hps)
     utils.check_git_hash(hps.model_dir)
@@ -122,7 +122,7 @@ def run():
         **hps.model,
     ).cuda()
     
-    wandb.watch(net_g, log="all")
+    # wandb.watch(net_g, log="all")
     
     net_d = MultiPeriodDiscriminator(hps.model.use_spectral_norm).cuda()
     
@@ -234,9 +234,6 @@ def train_and_evaluate(
     scheduler_g, scheduler_d, scheduler_dur_disc = schedulers
     train_loader, eval_loader = loaders
     writer, writer_eval = writers
-    print(type(logger))
-    print(type(logger.log))
-    print(type(logger.log_train))
     global global_step
     # Init the loss sum like infinity
     best_loss_sum = float('inf')  
@@ -275,10 +272,6 @@ def train_and_evaluate(
                 hps.data.mel_fmin,
                 hps.data.mel_fmax,
             )
-            # print(f"{x}, ")
-            # print(f"x.shape: {x.shape}, idx_str: {idx_str}, idx_end: {idx_end}")
-            
-            # print(mel.cpu().numpy().size)
             y_mel = commons.slice_segments(
                 mel, ids_slice, hps.train.segment_size // hps.data.hop_length
             )
@@ -403,7 +396,7 @@ def train_and_evaluate(
                 images=image_dict,
                 scalars=scalar_dict,
             )
-            wandb.log(scalar_dict)
+            # wandb.log(scalar_dict)
 
         if global_step % hps.train.eval_interval == 0:
             evaluate(hps, net_g, eval_loader, writer_eval)
@@ -443,7 +436,7 @@ def train_and_evaluate(
             best_model = net_g  
             torch.save(best_model.state_dict(), "best_model.pth")
         # Save the best model in wand after complete the epochs
-        wandb.save("best_model.pth")
+        #wandb.save("best_model.pth")
         global_step += 1
 
     logger.log_train.info("====> Epoch: {}".format(epoch))

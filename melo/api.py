@@ -10,7 +10,6 @@ import numpy as np
 import torch.nn as nn
 from tqdm import tqdm
 import torch
-import logger
 
 import utils
 import commons
@@ -18,7 +17,6 @@ from models import SynthesizerTrn
 from split_utils import split_sentence
 from mel_processing import spectrogram_torch, spectrogram_torch_conv
 from download_utils import load_or_download_config, load_or_download_model
-logger.init()
 class TTS(nn.Module):
     def __init__(self, 
                 language,
@@ -52,11 +50,8 @@ class TTS(nn.Module):
             num_languages=num_languages,
             **hps.model,
         ).to(device)
-        logger.log.info("model = SynthesizerTrn(len(symbols), hps.data.filter_length // 2 + 1, hps.train.segment_size // hps.data.hop_length, n_speakers=hps.data.n_speakers, num_tones=num_tones, num_languages=num_languages, **hps.model,).to(device)")
         model.eval()
-        logger.log.info("model.eval()")
         self.model = model
-        logger.log.info("self.model = model")
         self.symbol_to_id = {s: i for i, s in enumerate(symbols)}
         self.hps = hps
         self.device = device
@@ -67,25 +62,11 @@ class TTS(nn.Module):
         
         language = language.split('_')[0]
         self.language = 'ZH_MIX_EN' if language == 'ZH' else language # we support a ZH_MIX_EN model
-        # log_path = '/home/jovyan/MeloTTS-Windows/melo/logs_personalizados'
-        #self.logger = logger.log
-        # logging.basicConfig(filename=, level=logging.INFO)
-        # Definir la ruta personalizada
-        # Usar una carpeta diferente para el archivo de log
-        # Ruta personalizada para guardar el archivo de log
-        # try:
-        #     log_path = '/home/jovyan/MeloTTS-Windows/melo/logs_personalizados'
-        #     logger = utils.get_logger(log_path, filename="train_log.log")
-        logger.log.info("Logger inicializado con éxito")
-        # except Exception as e:
-        #     print(f"Error al inicializar el logger: {e}")
-
-        logger.log_train.info("API.py")
 
 
         
     @staticmethod
-    def audio_numpy_concat(segment_data_list, sr, speed=1.5):
+    def audio_numpy_concat(segment_data_list, sr, speed=1):
         audio_segments = []
         for segment_data in segment_data_list:
             audio_segments += segment_data.reshape(-1).tolist()
@@ -102,7 +83,7 @@ class TTS(nn.Module):
             print(" > ===========================")
         return texts
 
-    def tts_to_file(self, text, speaker_id, output_path=None, sdp_ratio=0.2, noise_scale=0.6, noise_scale_w=0.8, speed=1.5, pbar=None, format=None, position=None, quiet=False,):
+    def tts_to_file(self, text, speaker_id, output_path=None, sdp_ratio=0.2, noise_scale=0.6, noise_scale_w=0.8, speed=1, pbar=None, format=None, position=None, quiet=False,):
         language = self.language
         texts = self.split_sentences_into_pieces(text, language, quiet)
         audio_list = []
@@ -116,12 +97,8 @@ class TTS(nn.Module):
             else:
                 tx = tqdm(texts)
         print(tx)
-        logger.log.info("tx=texts object")
-        logger.log.info(texts)
         for t in tx:
             print(t)
-            logger.log.info('Including t from tx')
-            logger.log.info([t])
             if language in ['EN', 'ZH_MIX_EN']:
                 t = re.sub(r'([a-z])([A-Z])', r'\1 \2', t)
             device = self.device
@@ -133,32 +110,6 @@ class TTS(nn.Module):
                 bert = bert.to(device).unsqueeze(0)
                 ja_bert = ja_bert.to(device).unsqueeze(0)
                 x_tst_lengths = torch.LongTensor([phones.size(0)]).to(device)
-                logger.log.info("x_tst")
-                logger.log.info(x_tst.cpu().numpy())
-                logger.log.info("tones")
-                logger.log.info(tones.cpu().numpy())
-                logger.log.info("langs_ids")
-                logger.log.info(lang_ids.cpu().numpy())
-                logger.log.info("bert")
-                logger.log.info(bert.cpu().numpy())
-                logger.log.info("ja_bert")
-                logger.log.info(ja_bert.cpu().numpy())
-                # tensor_cpu = ja_bert.cpu().numpy()  # Convertir tensor a numpy y mover a CPU
-                # print(tensor_cpu.shape)
-                np.savetxt("./logs_personalizados/tensor_ja_bert.csv", ja_bert.squeeze(0).cpu().numpy(), delimiter=",")  
-                print("Tensor ja_bert guardado en tensor_ja_bert.csv")
-                logger.log.info("ja_bert (1, 768, 27) saved in tensor_ja_bert.csv")
-                logger.log.info("x_tst_lengths")
-                logger.log.info(x_tst_lengths.cpu().numpy())
-                logger.log.info("sdp_ratio")
-                logger.log.info(sdp_ratio)
-                logger.log.info("noise_scale")
-                logger.log.info(noise_scale)
-                logger.log.info("noise_scale_w")
-                logger.log.info(noise_scale_w)
-                logger.log.info("speed")
-                logger.log.info(speed)
-                logger.log.info("self.model.infer( x_tst, x_tst_lengths, speakers, tones, lang_ids, bert,ja_bert, sdp_ratio=sdp_ratio, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=1. / speed,)")
                 del phones
                 speakers = torch.LongTensor([speaker_id]).to(device)
                 audio = self.model.infer(
@@ -175,7 +126,6 @@ class TTS(nn.Module):
                         length_scale=1. / speed,
                     )[0][0, 0].data.cpu().float().numpy()                
                 del x_tst, tones, lang_ids, bert, ja_bert, x_tst_lengths, speakers
-                # 
             audio_list.append(audio)
         torch.cuda.empty_cache()
         audio = self.audio_numpy_concat(audio_list, sr=self.hps.data.sampling_rate, speed=speed)
@@ -185,8 +135,6 @@ class TTS(nn.Module):
         else:
 
             if format:
-                print('format')
                 soundfile.write(output_path, audio, self.hps.data.sampling_rate, format=format)
             else:
-                print('without format')
                 soundfile.write(output_path, audio, self.hps.data.sampling_rate)

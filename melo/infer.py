@@ -8,7 +8,7 @@ import logger
 @click.command()
 @click.option('--ckpt_path', '-m', type=str, default=None, help="Path to the checkpoint file")
 @click.option('--text', '-t', type=str, default=None, help="Text to speak")
-@click.option('--language', '-l', type=str, default="EN", help="Language of the model")
+@click.option('--language', '-l', type=str, default="ES", help="Language of the model")
 @click.option('--output_dir', '-o', type=str, default="outputs", help="Path to the output")
 def main(ckpt_path, text, language, output_dir):
     if ckpt_path is None:
