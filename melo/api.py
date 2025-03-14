@@ -11,12 +11,12 @@ import torch.nn as nn
 from tqdm import tqdm
 import torch
 
-import utils
-import commons
-from models import SynthesizerTrn
-from split_utils import split_sentence
-from mel_processing import spectrogram_torch, spectrogram_torch_conv
-from download_utils import load_or_download_config, load_or_download_model
+from . import utils
+from . import commons
+from .models import SynthesizerTrn
+from .split_utils import split_sentence
+from .mel_processing import spectrogram_torch, spectrogram_torch_conv
+from .download_utils import load_or_download_config, load_or_download_model
 class TTS(nn.Module):
     def __init__(self, 
                 language,

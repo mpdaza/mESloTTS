@@ -1,13 +1,30 @@
-FROM python:3.9-slim
+FROM python:3.10.0-slim
+
+RUN mkdir /app
+
+RUN mkdir /models
+
+RUN mkdir /output
+
 WORKDIR /app
-COPY . /app
 
-RUN apt-get update && apt-get install -y \
-    build-essential libsndfile1 \
-    && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt ./requirements.txt
 
+RUN pip install -r requirements.txt
+
+COPY . .
+
+RUN python setup.py install
 RUN pip install -e .
-RUN python -m unidic download
-RUN python melo/init_downloads.py
+# RUN python -m unidic download
 
-CMD ["python", "./melo/app.py", "--host", "0.0.0.0", "--port", "8888"]
+# WORKDIR /app/melo
+
+# ENV TEXT="Esto es una prueba del funcionamiento del tts"
+# ENV MODEL="data/weights/G_1500.pth"
+# ENV OUTPUT="data/weights/outputs"
+
+
+# CMD ["python", "infer.py", "--text \"$TEXT"\", "-m \"$MODEL"\"," -o \"$OUTPUT"\"]
+
+ENTRYPOINT [ "entrypoint.sh" ]

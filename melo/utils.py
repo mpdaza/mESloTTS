@@ -8,11 +8,11 @@ from scipy.io.wavfile import read
 import torch
 import torchaudio
 import librosa
-from text import cleaned_text_to_sequence, get_bert
-from text.cleaner import clean_text
-import commons
 import logging
-import logger
+from melo.text import cleaned_text_to_sequence, get_bert
+from melo.text.cleaner import clean_text
+from melo import commons
+
 MATPLOTLIB_FLAG = False
 logger_train = logging.getLogger(__name__)
 

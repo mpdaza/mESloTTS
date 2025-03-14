@@ -1,6 +1,6 @@
 import torch
 import os
-import utils
+from . import utils
 from cached_path import cached_path
 from huggingface_hub import hf_hub_download
 
@@ -24,17 +24,17 @@ DOWNLOAD_CONFIG_URLS = {
     'KR': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/KR/config.json',
 }
 
-# PRETRAINED_MODELS = {
-#     'G.pth': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/ES/checkpoint.pth',
-#     'D.pth': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/pretrained/D.pth',
-#     'DUR.pth': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/pretrained/DUR.pth',
-# }
-
 PRETRAINED_MODELS = {
-    'G.pth': './models/G_235000.pth',
-    'D.pth': './models/D_235000.pth',
-    'DUR.pth': './models/DUR_235000.pth',
-}
+    'G.pth': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/ES/checkpoint.pth',
+    'D.pth': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/pretrained/D.pth',
+    'DUR.pth': 'https://myshell-public-repo-host.s3.amazonaws.com/openvoice/basespeakers/pretrained/DUR.pth',
+ }
+
+# PRETRAINED_MODELS = {
+#     'G.pth': './models/G_235000.pth',
+#     'D.pth': './models/D_235000.pth',
+#     'DUR.pth': './models/DUR_235000.pth',
+# }
 
 
 LANG_TO_HF_REPO_ID = {
