@@ -126,6 +126,6 @@ If you use this work, please cite as:
 
 Cámara, Mateo, Gutiérrez, Juan, Daza, María Pilar, & Blanco, José Luis.  
 *Open-Source System for Multilingual Translation and Cloned Speech Synthesis*.  
-arXiv preprint arXiv:2507.02530, 2025.  
+[arXiv:2507.02530](https://arxiv.org/abs/2507.02530), 2025.  
 Presented at Forum Acusticum Euronoise 2025.  
 
