@@ -111,3 +111,21 @@ It is probably that you will need to add an ssh-key to login.
 ```
 
 In the wand api you will see in the project the different runs you make to the project.  -->
+
+
+
+
+## Acknowledgment
+
+This repository is part of the master's thesis:  
+**Development and evaluation of advanced training strategies for a text-to-speech system.**
+
+## Citation
+
+If you use this work, please cite as:
+
+Cámara, Mateo, Gutiérrez, Juan, Daza, María Pilar, & Blanco, José Luis.  
+*Open-Source System for Multilingual Translation and Cloned Speech Synthesis*.  
+arXiv preprint arXiv:2507.02530, 2025.  
+Presented at Forum Acusticum Euronoise 2025.  
+
